@@ -1,5 +1,6 @@
-data class Note(val noteID: Int,
+data class Note(val noteId: Int,
                 val title: String,
-                val text: String
+                val text: String,
+                var deleted: Boolean = false
                 ) {
 }
