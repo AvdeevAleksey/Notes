@@ -10,11 +10,11 @@ class NoteService: CrudService<Note> {
     override fun delete(id: Int) {
         if (!notes.isEmpty()) {
             for ((index, note) in notes.withIndex()) {
-                        if (note.noteId == id) {
-                            if (!notes[index].deleted) {
-                                notes[index].deleted = true
-                            }
-                        }
+                if (note.noteId == id) {
+                    if (!notes[index].deleted) {
+                        notes[index].deleted = true
+                    } else throw ErrorInTheNoteOperation("Deletion is not possible. The object has already been deleted.")
+                }
             }
         }
     }
@@ -23,7 +23,8 @@ class NoteService: CrudService<Note> {
         if (!notes.isEmpty()) {
             for ((index, note) in notes.withIndex()) {
                 if (note.noteId == entity.noteId) {
-                    notes[index] = entity
+                    if (!note.deleted) notes[index] =
+                        entity else throw ErrorInTheNoteOperation("The change is not possible. The object has already been deleted.")
                 }
             }
         }
@@ -32,13 +33,31 @@ class NoteService: CrudService<Note> {
 
     override fun get(): List<Note> {
         if (!notes.isEmpty()) {
-            var allNotes: List<Note> = for ((index, note) in notes.withIndex()) {
-                if (!note.deleted) {
-                    add()
+            val allNotes = mutableListOf<Note>()
+            notes.forEach {
+                if (!it.deleted) allNotes += Note(it.noteId, it.title, it.text, it.deleted)
+            }
+            return allNotes
+        } else return emptyList()
+    }
+
+    override fun recovery(id: Int) {
+        if (!notes.isEmpty()) {
+            for ((index, note) in notes.withIndex()) {
+                if (note.noteId == id) {
+                    if (notes[index].deleted) {
+                        notes[index].deleted = false
+                    } else throw ErrorInTheNoteOperation("Recovery is not possible. The object was not deleted.")
                 }
             }
         }
     }
 
-
+    fun getById(id: Int): Note {
+        return notes.forEach {
+            if (it.noteId == id) {
+                if (!it.deleted) it
+            }
+        }
+    }
 }

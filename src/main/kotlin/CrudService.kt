@@ -4,5 +4,5 @@ interface CrudService<A> {
     fun delete(id: Int)
     fun edit(entity: A)
     fun get(): List<A>
-
+    fun recovery(id: Int)
 }
