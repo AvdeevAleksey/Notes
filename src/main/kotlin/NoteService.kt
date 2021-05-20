@@ -53,11 +53,7 @@ class NoteService: CrudService<Note> {
         }
     }
 
-    fun getById(id: Int): Note {
-        return notes.forEach {
-            if (it.noteId == id) {
-                if (!it.deleted) it
-            }
-        }
+    fun getById(id: Int): Note? {
+        return notes.find { it.noteId == id && !it.deleted }
     }
 }

@@ -1,17 +1,53 @@
 class CommentService: CrudService<Comment> {
+
+    val comments = mutableListOf<Comment>()
+
     override fun add(entity: Comment): Int {
-        TODO("Not yet implemented")
+        comments.add(entity)
+        return comments.size
     }
 
     override fun delete(id: Int) {
-        TODO("Not yet implemented")
+        if (!comments.isEmpty()) {
+            for ((index, comment) in comments.withIndex()) {
+                if (comment.commentId == id) {
+                    if (!comments[index].deleted) {
+                        comments[index].deleted = true
+                    } else throw ErrorInTheCommentOperation("Deletion is not possible. The object has already been deleted.")
+                }
+            }
+        }
     }
 
     override fun edit(entity: Comment) {
-        TODO("Not yet implemented")
+        if (!comments.isEmpty()) {
+            for ((index, comment) in comments.withIndex()) {
+                if (comment.commentId == entity.commentId) {
+                    if (!comment.deleted) comments[index] = entity else throw ErrorInTheCommentOperation("The change is not possible. The object has already been deleted.")
+                }
+            }
+        }
     }
 
-    override fun get(entities: List<Comment>) {
-        TODO("Not yet implemented")
+    override fun get(): List<Comment> {
+        if (!comments.isEmpty()) {
+            val allComments = mutableListOf<Comment>()
+            comments.forEach {
+                if (!it.deleted) allComments += Comment(it.noteId, it.commentId, it.ownerId, it.replyTo, it.message, it.deleted)
+            }
+            return allComments
+        } else return emptyList()
+    }
+
+    override fun recovery(id: Int) {
+        if (!comments.isEmpty()) {
+            for ((index, comment) in comments.withIndex()) {
+                if (comment.commentId == id) {
+                    if (comments[index].deleted) {
+                        comments[index].deleted = false
+                    } else throw ErrorInTheCommentOperation("Recovery is not possible. The object was not deleted.")
+                }
+            }
+        }
     }
 }
