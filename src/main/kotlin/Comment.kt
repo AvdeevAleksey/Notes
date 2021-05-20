@@ -1,4 +1,4 @@
-data class Comment(val commentId:Int,
+data class Comment(val commentId:Int = 0,
                    val noteId: Int,
                    val ownerId: Int,
                    val replyTo: Int,    // идентификатор пользователя, ответом на комментарий которого является

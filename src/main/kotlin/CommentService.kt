@@ -3,7 +3,8 @@ class CommentService: CrudService<Comment> {
     val comments = mutableListOf<Comment>()
 
     override fun add(entity: Comment): Int {
-        comments.add(entity)
+        val lastId = if (!comments.isEmpty()) comments.last().commentId + 1 else 1
+        comments.add(entity.copy(commentId = lastId))
         return comments.size
     }
 

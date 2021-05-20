@@ -3,7 +3,8 @@ class NoteService: CrudService<Note> {
     val notes = mutableListOf<Note>()
 
     override fun add(entity: Note): Int {
-        notes.add(entity)
+        val lastId = if (!notes.isEmpty()) notes.last().noteId + 1 else 1
+        notes.add(entity.copy(noteId = lastId))
         return notes.size
     }
 
